@@ -41,6 +41,26 @@ def GetSpecificQueryString(QueryDict):
     
     return text
 
+#. 쿼리와 검색열을 ILIKE를 이용하여 대소문자 구분없이색, 자체 효율은 낮으나, index와 함께 사용할 경우 효율 대폭 상승
+def GetQueryString(Target, Query): # ex: concat("StandarDesignation","TestMethod","TestRange") ILIKE '%KS%' AND concat("StandarDesignation","TestMethod","TestRange") ILIKE '%210:2018%'
+    Query = Query.replace("-"," ") # 교정 기술지원코드에서 bar 제거
+    Query = Query.split()
+    Query = [item for item in Query if len(item) >= 2] # 두 글자 이상인 쿼리(키워드)사용
+    
+    text = ""
+    for string in Query:
+        text += " AND " # 확실히 OR보다는 AND가 겁색속도가 빠름
+        text += Target
+        text += " LIKE " # 검색대상 및 질의어 모두 소문자로 변환했으므로 ilike(x), like(o) 개꿀, 검색 속도 개선됨
+        text += "'%" # 쿼리문 양쪽에 %를 포함하면, contain조건이 됨
+        text += string
+        text += "%'"
+    text = text[4:] # AND는 불필요하므로 삭제
+    
+    return text
+
+print(GetQueryString(Target="제목", Query="위탁 전산"))
+
 #%% 회원가입정보 입력
 
 def AuthRegist(사번, 부서1, 부서2, 기타):
@@ -241,7 +261,7 @@ def DBSpecificQuery(ConnectInfo, TableName, ColumnList, QueryDict, SortField, So
 
 #%% (유사도 검색)
 
-def Title_Sim_Query(ConnectInfo, ContentsID, div_list_id):
+def Title_Sim_Query(ConnectInfo, Query, ContentsID, div_list_id):
 
     #. 시작시간 체크
     tic=timeit.default_timer()
@@ -259,12 +279,13 @@ def Title_Sim_Query(ConnectInfo, ContentsID, div_list_id):
     SQL = """
         SELECT      "제목","ContentsID","div_list_id","count", similarity("{Target}", '{Query}') 
         FROM       "{From}"
-        WHERE       "count" >= 1 AND "ContentsID" = '{ContentsID}' AND "div_list_id" ='{div_list_id}'
+        WHERE       "count" >= 1 AND "ContentsID" = '{ContentsID}' AND "div_list_id" ='{div_list_id}' AND {QueryString}
         ORDER BY   "similarity" DESC, "{SortField}" {Sortby}
         LIMIT       {Limit}
         """.format(
             Target      = "제목",
-            Query       = "위탁",
+            Query       = Query,
+            QueryString = GetQueryString(Target="제목", Query=Query),
             From        = "제목_카운트",
             ContentsID  = ContentsID,
             div_list_id = div_list_id,
@@ -273,13 +294,15 @@ def Title_Sim_Query(ConnectInfo, ContentsID, div_list_id):
             Limit       = 10
         )
     
-    
+    print(SQL)
     try: # 쿼리결과가 없으면 에러발생, 예외처리 ㄱㄱ
         test = pd.read_sql(SQL, conn)
-        test = test.loc[test["similarity"]>=0.1]
+        test = test.loc[test["similarity"]>=0.0] # 유사도가 전혀없는 녀석은 제외
     except:
         test = pd.DataFrame() # 빈 데이터 프레임 리턴
     
+    #. "제목"만 List로 전달하기
+    제목_List = test['제목'].tolist()
 
     #. DB 연결 종료
     cur.close()
@@ -293,9 +316,9 @@ def Title_Sim_Query(ConnectInfo, ContentsID, div_list_id):
     #print(SQL)
     
     return {"processtime(ms)":processtime,
-            "df" : test}
+            "df" : 제목_List}
 
-result = Title_Sim_Query(ConnectInfo, ContentsID=1, div_list_id=1)
+result = Title_Sim_Query(ConnectInfo, Query = "전산", ContentsID=0, div_list_id=1)
 
 #%% pg_trgm 설치 ( 필요한 경우 만 )
 # https://yahwang.github.io/posts/80

@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 
 from rest_framework.response import Response
 
-from app.Utils.DB.DBQuery                 import AuthRegist
+from app.Utils.DB.DBQuery                 import AuthRegist, Title_Sim_Query
 from app.Utils.Report.CreateReportTable   import CallReportTemplate, ReportRegist, GetReportDetail, ReportDelete, ReportModify
 from app.Utils.Report.CreateDivList       import CreateDivHTML
 
@@ -217,6 +217,36 @@ class ReportViewset(ModelViewSet):
                 "processtime(ms)"  :processtime, # ????????? ????
                 "Count"            :1, # ????????? ????
                 "data"             :df_Raw, # ?????????
+                })
+
+        else: # if tech_code in Request from client, return blank data
+            return Response({
+                "processtime(ms)"  :"", # ????????? ????
+                "Count"            :0, 
+                "data"             :[], 
+                })
+
+    #. "제목" 추천 리스트 받아오기
+    @action(detail=False, methods=['GET'])
+    #@csrf_protect
+    #. 주간업무보고 리스트 얻기
+    def Title_Sim_Get(self, request):
+
+        Query        = self.request.GET["Query"]
+        ContentsID   = self.request.GET["ContentsID"]
+        div_list_id  = self.request.GET["div_list_id"]
+
+        if ContentsID and div_list_id:
+            
+            df_Raw = Title_Sim_Query(ConnectInfo, Query, ContentsID, div_list_id)
+            # Json타입 변경
+            processtime  = df_Raw['processtime(ms)']
+            Title_list   = df_Raw['df']
+
+            return Response({
+                "processtime(ms)"   :processtime, # ????????? ????
+                "Count"             :len(Title_list), # ????????? ????
+                "data"              :Title_list, # ?????????
                 })
 
         else: # if tech_code in Request from client, return blank data

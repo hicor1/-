@@ -168,13 +168,8 @@
                         <div class="col-md-12 col-12">
                             <div class="form-group">
                                 <h6 style="font-weight: 700;">*제목 :</h6>
-                                <input list="title_list" autocomplete="on" type="text" id="제목" class="form-control" placeholder="ex) 위탁관리 전산화" name="제목" required>
+                                <input list="title_list" oninput="TitleRecommand(Query=this.value, ContentsID=$('#ContentsID').val(), div_list_id='{{div_list_id}}')" autocomplete="off" type="text" id="제목" class="form-control" placeholder="ex) 위탁관리 전산화" name="제목" required>
                                 <datalist id="title_list">
-                                    <option value="Edge">
-                                    <option value="Firefox">
-                                    <option value="Chrome">
-                                    <option value="Opera">
-                                    <option value="Safari">
                                 </datalist>
                             </div>
                         </div>
@@ -348,15 +343,6 @@
     });
 </script>
 
-<!--//검색어 추천기능 Function 등록-->
-<script type="text/javascript">
-
-    async function suggestion(){
-        $("#modal_title").keyup(function){}
-    }
-
-
-</script>
 
 <!--Custom Function 등록-->
 <script type="text/javascript">

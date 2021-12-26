@@ -549,3 +549,53 @@ async function GetReportDetail(e, ReportID){ //this를 e로 받아온다
     });
 
 }
+
+//검색어("제목") 추천기능 Function
+async function TitleRecommand(Query, ContentsID, div_list_id){
+    //Api Url 연결
+    var api_url = '/APIreport/ReportView/Title_Sim_Get/';
+    var base_url = window.location.origin;
+    var call_url = base_url+api_url;
+
+    // 2글자 이상일때만 모듈 작동
+    if (Query.length >= 2){
+
+        $.ajax({
+            url : call_url,
+            type : "GET",
+            dataType:'json',
+            data : {
+                'csrfmiddlewaretoken': $("input[name=csrfmiddlewaretoken]").val(),//html랜더링때 배포한 csrf토큰키 확인
+                'Query'      :Query,
+                'ContentsID' :ContentsID,
+                'div_list_id':div_list_id,
+            },
+            success : function(data){ 
+                // 수신 성공
+                var string = "";
+                var Title_list= data.data;
+                var count = Title_list.length;
+                // 추천결과가 1개 이상일 경우에만 리스트 리턴
+                if (count >= 1){
+                    for (let i=0; i<Title_list.length; i++){
+                        string += "<option value="
+                        string += '"' + Title_list[i] + '"' + '>'
+                    }
+
+                } else{
+                    string += "<option value=" + '"' + "추천검색결과가 존재하지 않습니다." +'"'+ '>';
+                }
+                $("#title_list").empty();
+                $("#title_list").append(string);
+                //console.log(string);
+            },
+
+            error : function(){
+                // 수신 에러
+                //alert("error");
+            }
+        });
+    } else {
+
+    }
+};
