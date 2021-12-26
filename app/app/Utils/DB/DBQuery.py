@@ -238,6 +238,119 @@ def DBSpecificQuery(ConnectInfo, TableName, ColumnList, QueryDict, SortField, So
     return {"processtime(ms)":processtime,
             "df" : test}
 
+
+#%% (유사도 검색)
+
+def Title_Sim_Query(ConnectInfo, ContentsID, div_list_id):
+
+    #. 시작시간 체크
+    tic=timeit.default_timer()
+    
+    #. DB 연결 열기
+    conn = psycopg2.connect(host     = ConnectInfo['host'],
+                            dbname   = ConnectInfo['dbname'],
+                            user     = ConnectInfo['user'],
+                            password = ConnectInfo['password'],
+                            port     = ConnectInfo['port'],
+                            options  = ConnectInfo['options'])
+    cur = conn.cursor()
+
+    #. 쿼리조합 ( concat은 문자열 합치기 )  ex) : OrderBy = "similarity" DESC, "AccreditName" ASC
+    SQL = """
+        SELECT      "제목","ContentsID","div_list_id","count", similarity("{Target}", '{Query}') 
+        FROM       "{From}"
+        WHERE       "count" >= 1 AND "ContentsID" = '{ContentsID}' AND "div_list_id" ='{div_list_id}'
+        ORDER BY   "similarity" DESC, "{SortField}" {Sortby}
+        LIMIT       {Limit}
+        """.format(
+            Target      = "제목",
+            Query       = "위탁",
+            From        = "제목_카운트",
+            ContentsID  = ContentsID,
+            div_list_id = div_list_id,
+            SortField   = "count",
+            Sortby      = "desc",
+            Limit       = 10
+        )
+    
+    
+    try: # 쿼리결과가 없으면 에러발생, 예외처리 ㄱㄱ
+        test = pd.read_sql(SQL, conn)
+        test = test.loc[test["similarity"]>=0.1]
+    except:
+        test = pd.DataFrame() # 빈 데이터 프레임 리턴
+    
+
+    #. DB 연결 종료
+    cur.close()
+    conn.close()
+    
+    #. 종료시간 체크
+    toc=timeit.default_timer()
+    #. 프로세스 시간 산출 (ms)
+    processtime = round((toc - tic)*1000,2)
+    
+    #print(SQL)
+    
+    return {"processtime(ms)":processtime,
+            "df" : test}
+
+result = Title_Sim_Query(ConnectInfo, ContentsID=1, div_list_id=1)
+
+#%% pg_trgm 설치 ( 필요한 경우 만 )
+# https://yahwang.github.io/posts/80
+
+def InstallPgtrgm(ConnectInfo):
+    #. DB 연결 열기
+    conn = psycopg2.connect(host     = ConnectInfo['host'],
+                            dbname   = ConnectInfo['dbname'],
+                            user     = ConnectInfo['user'],
+                            password = ConnectInfo['password'],
+                            port     = ConnectInfo['port'],
+                            options  = ConnectInfo['options'])
+    cur = conn.cursor()
+    
+    cur.execute('CREATE EXTENSION pg_trgm') 
+    cur.execute('CREATE EXTENSION btree_gin')
+    conn.commit()
+    #. DB 연결 종료
+    cur.close()
+    conn.close()
+    
+    print('{} : CREATE EXTENSION pg_trgm Done'.format(datetime.datetime.now()))
+    
+#InstallPgtrgm(ConnectInfo)
+
+#%% 특정 테이블에 GIN or GIST index(색인)열 생성 ( 필요한 경우 만 ) # 검색열(TargetLIst)과 완전히 일치하는 index를 만들어야 효율 증대!!!
+def CreateIndex(ConnectInfo):
+    #. DB 연결 열기
+    conn = psycopg2.connect(host     = ConnectInfo['host'],
+                            dbname   = ConnectInfo['dbname'],
+                            user     = ConnectInfo['user'],
+                            password = ConnectInfo['password'],
+                            port     = ConnectInfo['port'],
+                            options  = ConnectInfo['options'])
+    cur = conn.cursor()
+    
+    
+    #. 기존 index지우기
+    cur.execute('DROP INDEX Title_recommand_idx')
+    
+    
+    #. 새로운 index 생성
+    cur.execute('CREATE INDEX Title_recommand_idx    ON "report_list"   USING GIST (( "제목" ) gist_trgm_ops)') # 실제로 이것밖에 안씀
+
+    #.커밋
+    conn.commit()
+    
+    #. DB 연결 종료
+    cur.close()
+    conn.close()
+    
+    print('{0} : CREATE INDEX Done'.format(datetime.datetime.now()))
+    
+CreateIndex(ConnectInfo)
+
 #%%
 if __name__ == "__main__":
     df = AuthRegist()

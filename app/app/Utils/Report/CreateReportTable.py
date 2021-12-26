@@ -667,11 +667,3 @@ def GetRegisterdedPerson(div_list_id, Year, WeekNum):
 
     return df_Raw
 
-
-
-
-
-
-
-    
-    

@@ -13,15 +13,6 @@
 <!--Form Validation-->
 <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
 <script src='{% static "vendor/jquery/jquery.validate.min.js" %}'></script>
-<!---검색어 추천!!  ( choice ) Js & CSS load _ 그냥 지울까..?--->
-<link rel="stylesheet" href='{% static "voler-master/assets/vendors/choices.js/base.css" %}'>
-<link rel="stylesheet" href='{% static "voler-master/assets/vendors/choices.js/base.min.css" %}'>
-<link rel="stylesheet" href='{% static "voler-master/assets/vendors/choices.js/choices.css" %}'>
-<link rel="stylesheet" href='{% static "voler-master/assets/vendors/choices.js/choices.min.css" %}'>
-<link rel="stylesheet" href='{% static "voler-master/assets/css/app.css" %}'>
-
-<script src='{% static "voler-master/assets/vendors/choices.js/choices.js" %}'></script>
-<script src='{% static "voler-master/assets/vendors/choices.js/choices.min.js" %}'></script>
 
 <!-- Custom style 추가  -->
 <style>
@@ -177,10 +168,14 @@
                         <div class="col-md-12 col-12">
                             <div class="form-group">
                                 <h6 style="font-weight: 700;">*제목 :</h6>
-                                <input id="modal_title" autocomplete="on" type="text" id="제목" class="form-control" placeholder="ex) 위탁관리 전산화" name="제목" required>
-                                <div id="suggestion_box">
-                                    
-                                </div>
+                                <input list="title_list" autocomplete="on" type="text" id="제목" class="form-control" placeholder="ex) 위탁관리 전산화" name="제목" required>
+                                <datalist id="title_list">
+                                    <option value="Edge">
+                                    <option value="Firefox">
+                                    <option value="Chrome">
+                                    <option value="Opera">
+                                    <option value="Safari">
+                                </datalist>
                             </div>
                         </div>
                     </div>
