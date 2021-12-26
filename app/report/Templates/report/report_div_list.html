@@ -1,0 +1,87 @@
+{% extends 'voler_base.html' %}
+{% load static %}
+
+
+{% block content %}
+<!--JS-->
+<script src='{% static "vendor/jquery/jquery-1.12.4.js" %}' integrity="sha256-Qw82+bXyGq6MydymqBxNPYTaUXXq7c8v3CwiYwLLNXU=" crossorigin="anonymous"></script>
+<script src='{% static "self/API/APIreport.js" %}'></script>
+
+<!-- Custom style 추가  -->
+<style>
+
+</style>
+
+
+<!-- Main -->
+
+<div class="main-content container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-12 col-md-6 order-md-1 order-last">
+                <h3>해당 부서를 선택해주세요.</h3>
+                <p class="text-subtitle text-muted">많고 많은 부서들중에 어떤 부서가 궁금한가요</p>
+            </div>
+            <div class="col-12 col-md-6 order-md-2 order-first">
+                <nav aria-label="breadcrumb" class="breadcrumb-header">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Dropdowns</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!--API를 호출하여 본부>센터 리스트 등록-->
+    
+    <section class="section">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title" style='font-weight: 700;'>주간업무보고 작성</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-2">
+                                <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                                    <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true"><strong>[My]&nbsp&nbsp&nbsp;</strong>주간업무보고</a>
+                                    <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false"><strong>[ALL]&nbsp;</strong>주간업무보고</a>    
+                                </div>
+                            </div>
+                            <div class="col-10">
+                                <div class="tab-content" id="v-pills-tabContent">
+                                    <div class="tab-pane fade active show" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                                        <div id="MyDivList"></div> 
+                                    </div>
+                                    <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+                                        <div id="DivList"></div> 
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<!--이벤트 등록-->
+<script type="text/javascript">
+    $(document).ready(function(){
+        MyDivList( div1='{{div1}}', div2='');  // (나의) 부서 리스트 받아오기
+        GetDivList(div1='',         div2='');  // (전체) 부서 리스트 받아오기
+    });
+</script>
+
+<!--Custom Function 등록-->
+<script type="text/javascript">
+
+
+</script>
+
+{% endblock %}

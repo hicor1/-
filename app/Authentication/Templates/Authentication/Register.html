@@ -1,0 +1,137 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign up - K-tools</title>
+    <link rel="stylesheet" href="{% static 'voler-master/assets/css/bootstrap.css' %}">
+    
+    <link rel="shortcut icon" href="{% static 'voler-master/assets/images/favicon.svg' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'voler-master/assets/css/app.css' %}">
+
+    <!--JS-->
+    <script src='{% static "vendor/jquery/jquery-1.12.4.js" %}' integrity='sha256-Qw82+bXyGq6MydymqBxNPYTaUXXq7c8v3CwiYwLLNXU=' crossorigin='anonymous'></script>
+    <script src='{% static "self/API/APIAuth.js" %}'></script>
+    <script src='{% static "vendor/jquery/jquery.validate.min.js" %}'></script>
+
+    <!-- Custom style 추가  -->
+    <style>
+        .hidden{
+            display:none;
+        }
+        label.error{
+            background-color: #E2ECFF;
+            color: #5A8DEE;
+            font-family: "Raleway";
+            box-sizing: border-box;
+            padding: 0.5rem 0.5rem;
+        }
+    </style>
+
+</head>
+
+    
+<body>
+    <div id="auth">
+        
+<div class="container">
+    <div class="row">
+        <div class="col-md-7 col-sm-12 mx-auto">
+            <div class="card pt-4">
+                <div class="card-body">
+                    <div class="text-center mb-5">
+                        <img src="{% static 'voler-master/assets/images/[K-tools]_logo_심볼.png' %}" height="48" class='mb-4'>
+                        <h3>Sign Up</h3>
+                        <p>Please fill the form to register.</p>
+                    </div>
+                    <form id="form_data" method="POST">{% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label for="first-name-column">이름</label>
+                                    <input type="text" id="first-name-column" class="form-control"  name="이름">
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label for="last-name-column">이메일</label>
+                                    <input type="text" id="last-name-column" class="form-control"  name="이메일">
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label for="last-name-column">사번</label>
+                                    <input type="text" id="last-name-column" class="form-control"  name="사번">
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label for="last-name-column">소속본부</label>
+                                    <select class="form-select" id="div1" name="소속본부"></select>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label for="last-name-column">소속센터</label>
+                                    <select class="form-select" id="div2" name="소속센터"></select>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label for="last-name-column">비고(기타)</label>
+                                    <input type="text" id="last-name-column" class="form-control"  name="비고(기타)">
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label for="username-column">비밀번호</label>
+                                    <input type="password" id="username-column" class="form-control" name="비밀번호">
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                    <label for="country-floating">비밀번호확인</label>
+                                    <input type="password" id="country-floating" class="form-control" name="비밀번호확인">
+                                </div>
+                            </div>
+                        </diV>
+
+
+                        <h5 style="color:red">{{warning}}</h5>
+
+                                <a href="{% url 'Authentication:Login' %}">Have an account? Login</a>
+                        <div class="clearfix">
+                            <button type='submit' action="{% url 'Authentication:Register'%}" class="btn btn-primary float-right">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    </div>
+
+<!--이벤트 등록-->
+<script type="text/javascript">
+    $(document).ready(function(){
+        FormValidation();
+        GetDiv1();
+        // 본부 선택시, 센터값변경 이벤트 발생
+        $("#div1").change(function(){
+            GetDiv2(div1=$("#div1").val());
+        });
+    });
+</script>
+
+    <script src="{% static 'voler-master/assets/js/feather-icons/feather.min.js' %}"></script>
+    <script src="{% static 'voler-master/assets/js/app.js' %}"></script>
+    
+    <script src="{% static 'voler-master/assets/js/main.js' %}"></script>
+
+
+    
+</body>
+
+</html>

@@ -1,0 +1,45 @@
+version: '3.7'
+
+services:
+  web:
+    container_name: WAS_k-tools
+    image: k-tools_web:latest
+    restart: always
+    command: gunicorn ktools_project.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+      - media_volume:/home/app/web/mediafiles
+    expose:
+      - 8000
+    env_file:
+      - ./.env.prod
+    networks: #. 컨테이너간 통신을 위한 네트워크 지정
+    - NET_k-tools
+
+  nginx:
+    container_name: WEB_k-tools
+    image: k-tools_nginx:latest
+    restart: always
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+      - media_volume:/home/app/web/mediafiles
+    ports:
+      #- 443:443 # 21.4.30 추가
+      #- 80:80
+      - 1337:443 # 외부에서 1337로 받고, nginx.conf에 따라 433 listen에 받는다, 그 후에 upstream인 web:8000으로 proxy한다.
+    depends_on:
+      - web
+    networks: #. 컨테이너간 통신을 위한 네트워크 지정
+    - NET_k-tools
+      
+volumes:
+  static_volume:
+  media_volume:
+
+#. 컨테이너간 통신을 위한 네트워크 생성
+networks:
+  NET_k-tools:
+    name: NET_k-tools
+    driver: bridge
+    #external: true
+    #internal: true

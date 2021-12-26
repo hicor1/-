@@ -1,0 +1,174 @@
+#############################
+해야될것들####################
+사번 중복 확인
+개인정보수정
+지난계획 불러오기
+나의 부서 바로가기
+본인이 등록한 또는 관리자만 (수정)가능하기
+
+모달팝업할때 스크롤 위로가는거 방지
+
+# 자동완성
+# 센터별 예산코드 기준 ( 과제 )
+# 센터별 비밀번호 등등 또는 권한 
+
+
+
+
+https://code1018.tistory.com/category/Web/Django%20Project?page=2
+http://raccoonyy.github.io/useful-korean-blog-for-python-and-django/
+https://todd.tistory.com/554
+https://rednooby.tistory.com/category/%ED%8C%8C%EC%9D%B4%EC%8D%AC%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D/Django%EA%B8%B0%EC%B4%88?page=2
+https://lsjsj92.tistory.com/m/477
+https://doorbw.tistory.com/181
+http://pythonstudy.xyz/python/article/309-DB-%EC%84%A4%EC%A0%95%EA%B3%BC-Migration
+http://jeremyko.blogspot.com/2012/08/django-1.html
+https://www.youtube.com/watch?v=Go-NZbOgcUE&list=PLieE0qnqO2kSHhEZzTBTtCUOKO1G_-Ctd&index=4
+https://www.youtube.com/watch?v=S8kAi_TyE9c&list=PLieE0qnqO2kSHhEZzTBTtCUOKO1G_-Ctd&index=6
+[장고걸스]
+https://tutorial.djangogirls.org/ko/django/
+
+
+[postgresql설치관련] : https://doorbw.tistory.com/179?category=711158\
+[경로설정] : cd C:\Users\hicor\hicor_django
+[장고프로젝트작성] : django-admin startproject start_django
+[어플리케이션(App)생성] : python manage.py startapp blog
+[관리자 계정만들기] : python manage.py createsuperuser
+[장고 서버 시작] : python manage.py runserver 0.0.0.0:8000
+[html에서 파이썬 문법 사용하기] : {% %}
+[html에서 폼(form)만 다룰줄알아도 왠만한건 만들듯] : http://www.nextree.co.kr/p8428/
+[웹서버] : 127.0.0.1:8000 또는 localhost:8000 
+
+[INSTALL_APPS]
+python.exe manage.py makemigrations
+[데이터베이스에 테이블 만들기]
+python.exe manage.py migrate
+
+[Dajngo framework에는 DB와 쿼리할수있는 표준 문법 존재 _ ORM ]
+## https://itholic.github.io/django-queryset-api/ ##
+1. Student.objects.get(s_name=name) # Student테이블에서 특정이름의 정보만 불러온다
+2. qs = Student.objects.all() #Student 테이블의 모든 정보를 불러온다
+3. qs = Student(s_name=name, s_major=major, s_age=age, s_grade=grade, s_gender=gender)
+    qs.save()  #Student Model에 데이터 담고 DB에 넘기기
+4.  s_qs = Student.objects.get(s_name = name)
+    s_qs.delete() 학생정보 DB에서 삭제
+5. 
+
+[초기화면으로reverse돌아가기]
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+return HttpResponseRedirect(reverse('students:stuAll')) # 다시 초기화면으로 돌리기
+    
+
+[PostgreSQL 설정 in setting.py]
+DATABASES = {
+        'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'django_test',
+        'USER': 'postgres',
+        'PASSWORD': 'dlacodnr1!',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
+    }
+}
+
+
+[일반적인 setting.py]
+
+LANGUAGE_CODE = 'ko-kr'
+
+TIME_ZONE = 'Asia/Seoul'
+
+USE_I18N = True
+
+USE_L10N = True
+
+USE_TZ = True
+
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/2.2/howto/static-files/
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+[model.py 예제]
+
+from __future__ import unicode_literals
+from django.db import models
+
+class DjangoBoard(models.Model):
+    subject = models.CharField(max_length=50, blank=True)
+    name = models.CharField(max_length=50, blank=True)
+    created_date = models.DateField(null=True, blank=True)
+    mail = models.CharField(max_length=50, blank=True)
+    memo = models.CharField(max_length=50, blank=True)
+    hits = models.IntegerField(null=True, blank=True)
+  
+    def __str__(self):
+        return self.subject  #객체 이름 설정
+
+[HTML뼈대]
+<html>
+    <head>
+        <title>hicor's blog</title>
+    </head>
+    <body>
+        <p>Hi there</p>
+        <p>It works</p>
+    </boby>
+</html>
+
+[for문 기본 _ in 템플릿 태크]
+{% for post in posts%}
+  {{post]}
+{% endfor %}
+
+[HTML꾸미기_CSS]
+https://getbootstrap.com/
+
+[HTML꾸미기_CSS_setting.py변경 내용]
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+[HTML에서 블록 (block) 사용하기 , base.html]
+{% extends 'blog/base.html' %}
+{% block content %}, {% block title %}
+{% endblock %}
+
+
+[#######ORM 예제 ####]
+posts = Post.objects.filter(published_date_lte=timezone.now().order_by('published_date')
+return render(request, 'blog/post_list.html',{'posts':posts})
+
+post = get_object_or_404(Post, pk=pk)
+
+
+[Admin에서 App DB추가]
+from django.contrib import admin
+from .models import Question, Choice
+
+admin.site.register(Question)
+admin.site.register(Choice)
+
+
+[Format문법]
+return HttpResponse('니가 찾고 있는 질문은{}'.format(question_id))
+
+[view에서 html과 연결하는 방식]
+
+from django.shortcuts import render
+from django.http import HttpResponse
+from .models import Question
+from django.template import loader
+
+def index(request):
+    latest_question_list = Question.objects.order_by('pub_date')[:5]
+    template = loader.get_template('/polls/index.html')
+    context = {'latest_question_list':latest_question_list}
+    return HttpResponse(template.render(context, request))
+

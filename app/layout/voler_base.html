@@ -1,0 +1,188 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>성과관리플랫폼</title>
+
+    <link rel="stylesheet" href="{% static 'voler-master/assets/css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'voler-master/assets/vendors/chartjs/Chart.min.css' %}">
+    <link rel="stylesheet" href="{% static 'voler-master/assets/vendors/perfect-scrollbar/perfect-scrollbar.css' %}">
+    <link rel="stylesheet" href="{% static 'voler-master/assets/css/app.css' %}">
+    <link rel="shortcut icon" href="{% static 'voler-master/assets/images/favicon.svg' %}" type="image/x-icon">
+
+    <!--fontawesome 아이콘추가-->
+    <script src="{% static 'vendor/fontawesome/dae493699f.js' %}" crossorigin="anonymous"></script>
+    
+
+</head>
+<body>
+    <div id="app">
+        <div id="sidebar" class='active'>
+            <div class="sidebar-wrapper active">
+    <div class="sidebar-header">
+        <a href="{% url 'main:main' %}">
+            <img src="{% static 'voler-master/assets/images/ktl_logo.JPG' %}" alt="" srcset="" style="height: 120px;">
+        </a>
+    </div>
+    <div class="sidebar-menu">
+        <ul class="menu">
+            
+            
+                <li class='sidebar-title'>Main Menu</li>
+
+                <li class="sidebar-item active ">
+                    <a href="#" class='sidebar-link'>
+                        
+                        <i data-feather="home" width="20"></i> 
+                        
+                        <span>Dashboard</span>
+                    </a>
+                    
+                </li>
+
+
+                <li class="sidebar-item  has-sub">
+                    <a href="#" class='sidebar-link'>
+                        <i data-feather="file-text" width="20"></i> 
+                        <span>주간업무보고</span>
+                    </a>
+                    
+                    <ul class="submenu ">
+                        
+                        <li>
+                            <a href="{% url 'report:report_div_list' %}">주간업무보고</a>
+                        </li>
+                        
+                        <li>
+                            <a href="#">나의업무보고</a>
+                        </li>
+                        
+                        <li>
+                            <a href="#">달력으로보기</a>
+                        </li>
+                        
+                        <li>
+                            <a href="#">기타</a>
+                        </li>
+
+
+                    </ul>
+                    
+                </li>
+
+                <li class="sidebar-item  has-sub">
+                    <a href="#" class='sidebar-link'>
+                        <i data-feather="grid" width="20"></i> 
+                        <span>게시판</span>
+                    </a>
+                    
+                    <ul class="submenu ">
+                        
+                        <li>
+                            <a href="#">공지사항</a>
+                        </li>
+                        
+                        <li>
+                            <a href="#">Q&A</a>
+                        </li>
+
+                        <li>
+                            <a href="#">FAQ</a>
+                        </li>
+                        
+                    </ul>
+                    
+                </li>
+      
+
+        </ul>
+    </div>
+    <button class="sidebar-toggler btn x"><i data-feather="x"></i></button>
+</div>
+        </div>
+        <div id="main">
+            <nav class="navbar navbar-header navbar-expand navbar-light">
+                <a class="sidebar-toggler" href="#"><span class="navbar-toggler-icon"></span></a>
+                <button class="btn navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav d-flex align-items-center navbar-light ml-auto">
+                        <li class="dropdown nav-icon">
+                            {{ user.username }}님, 환영합니다.
+                            <a href="#" data-toggle="dropdown" class="nav-link  dropdown-toggle nav-link-lg nav-link-user">
+                                <div class="d-lg-inline-block">
+                                    <i data-feather="bell"></i>
+                                </div>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right dropdown-menu-large">
+                                <h6 class='py-2 px-4'>Notifications</h6>
+                                <ul class="list-group rounded-none">
+                                    <li class="list-group-item border-0 align-items-start">
+                                        <div class="avatar bg-success mr-3">
+                                            <span class="avatar-content"><i data-feather="shopping-cart"></i></span>
+                                        </div>
+                                        <div>
+                                            <h6 class='text-bold'>알림</h6>
+                                            <p class='text-xs'>
+                                                알림이 없습니다.
+                                            </p>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="dropdown nav-icon mr-2">
+                            <a href="#" data-toggle="dropdown" class="nav-link  dropdown-toggle nav-link-lg nav-link-user">
+                                <div class="d-lg-inline-block">
+                                    <i data-feather="user"></i>
+                                </div>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item" href="#"><i data-feather="user"></i> Account</a>
+                                <a class="dropdown-item" href="#"><i data-feather="mail"></i> Messages</a>
+                                <a class="dropdown-item" href="#"><i data-feather="settings"></i> Settings</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{% url 'Authentication:Logout' %}"><i data-feather="log-out"></i> Logout</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        
+            {% block content %}
+
+            
+            {% endblock %}
+
+            <footer>
+                <div class="footer clearfix mb-0 text-muted">
+                    <div class="float-left">
+                        <p>2021 &copy; k-tools</p>
+                    </div>
+                    <div class="float-right">
+                        <p>Crafted with <span class='text-danger'><i data-feather="heart"></i></span> by <a href="#">Chaewook Lim</a></p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <script src="{% static 'voler-master/assets/js/feather-icons/feather.min.js' %}"></script>
+    <script src="{% static 'voler-master/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js' %}"></script>
+    <script src="{% static 'voler-master/assets/js/app.js' %}"></script>
+    
+    <script src="{% static 'voler-master/assets/vendors/chartjs/Chart.min.js' %}"></script>
+    <script src="{% static 'voler-master/assets/vendors/apexcharts/apexcharts.min.js' %}"></script>
+    <script src="{% static 'voler-master/assets/js/pages/dashboard.js' %}"></script>
+
+    <script src="{% static 'voler-master/assets/js/main.js' %}"></script>
+
+
+
+    
+</body>
+</html>

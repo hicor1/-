@@ -1,0 +1,380 @@
+{% extends 'voler_base.html' %}
+{% load static %}
+
+
+{% block content %}
+<!--JS-->
+<script src='{% static "vendor/jquery/jquery-1.12.4.js" %}' integrity='sha256-Qw82+bXyGq6MydymqBxNPYTaUXXq7c8v3CwiYwLLNXU=' crossorigin='anonymous'></script>
+<script src='{% static "self/API/APIreport.js" %}'></script>
+<!--Datepicker-->
+<link rel="stylesheet" href='{% static "vendor/bootstrap/datepicker/bootstrap-datepicker3.min.css" %}'>
+<script type='text/javascript' src='{% static "vendor/bootstrap/datepicker/bootstrap-datepicker.min.js" %}'></script>
+<script src='{% static "vendor/bootstrap/datepicker/bootstrap-datepicker.kr.js" %}' charset="UTF-8"></script>
+<!--Form Validation-->
+<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
+<script src='{% static "vendor/jquery/jquery.validate.min.js" %}'></script>
+<!---검색어 추천  ( choice ) Js & CSS load--->
+<link rel="stylesheet" href='{% static "voler-master/assets/vendors/choices.js/base.css" %}'>
+<link rel="stylesheet" href='{% static "voler-master/assets/vendors/choices.js/base.min.css" %}'>
+<link rel="stylesheet" href='{% static "voler-master/assets/vendors/choices.js/choices.css" %}'>
+<link rel="stylesheet" href='{% static "voler-master/assets/vendors/choices.js/choices.min.css" %}'>
+<link rel="stylesheet" href='{% static "voler-master/assets/css/app.css" %}'>
+
+<script src='{% static "voler-master/assets/vendors/choices.js/choices.js" %}'></script>
+<script src='{% static "voler-master/assets/vendors/choices.js/choices.min.js" %}'></script>
+
+<!-- Custom style 추가  -->
+<style>
+    .hidden{
+        display:none;
+    }
+    label.error{
+        background-color: #E2ECFF;
+        color: #5A8DEE;
+        font-family: "Raleway";
+        box-sizing: border-box;
+        padding: 0.5rem 0.5rem;
+    }
+</style>
+
+<div class="main-content container-fluid">
+
+    <div class="page-title">
+        <div class="row">
+            <div class="col-12 col-md-6 order-md-1 order-last">
+                <h3>주간업무보고</h3>
+                <p class="text-subtitle text-muted"><span id="div1">{{div1}} </span><span id="div2">{{div2}}</span> 주간업무보고 사항</p>
+            </div>
+            <div class="col-12 col-md-6 order-md-2 order-first">
+                <nav aria-label="breadcrumb" class='breadcrumb-header'>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Progress</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!--API를 호출하여 본부>센터 리스트 등록-->
+    <div id="DivList"></div>
+    
+    <!-- 주간업무보고 미등록자 표현 -->
+    <section class="section">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5 style='font-weight: 600;' class="card-title">실적</h5>
+                        <ul style='margin-bottom: 20px;' class="nav nav-tabs" id="myTab" role="tablist">
+
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link active" id="profile-tab" data-toggle="tab" href="#실적_등록" role="tab" aria-controls="profile" aria-selected="false">등록완료</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link " id="contact-tab" data-toggle="tab" href="#실적_미등록" role="tab" aria-controls="contact" aria-selected="true">미등록</a>
+                            </li>
+                        </ul>
+                        <div style='padding-left: 1em;'  class="tab-content" id="myTabContent">
+
+                            <div class="tab-pane fade active show" id="실적_등록" role="tabpanel" aria-labelledby="profile-tab"></div>
+                            
+                            <div class="tab-pane fade " id="실적_미등록" role="tabpanel" aria-labelledby="contact-tab">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 style='font-weight: 600;' class="card-title">계획</h5>
+                        <ul style='margin-bottom: 20px;' class="nav nav-tabs" id="myTab" role="tablist">
+
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link active" id="profile-tab" data-toggle="tab" href="#계획_등록" role="tab" aria-controls="profile" aria-selected="false">등록완료</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link " id="contact-tab" data-toggle="tab" href="#계획_미등록" role="tab" aria-controls="contact" aria-selected="true">미등록</a>
+                            </li>
+                        </ul>
+                        <div style='padding-left: 1em;'  class="tab-content" id="myTabContent">
+
+                            <div class="tab-pane fade active show" id="계획_등록" role="tabpanel" aria-labelledby="profile-tab"></div>
+                            
+                            <div class="tab-pane fade" id="계획_미등록" role="tabpanel" aria-labelledby="contact-tab"></div>
+                        
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Default Progress Start  -->
+    <section class="section">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item "><a href="#">{{div2}} </a></li>
+                        <li class="breadcrumb-item "><a href="#">{{Year}} 년</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">{{WeekNum}} 주차</li><span id="FullDateText"></span>
+                    </ol>
+                </h3>
+                <div class="dropdown">
+                    <button class="btn btn-primary round dropdown-toggle mr-1" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{WeekNum}} 주차
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <!--Script를 호출하여 주차 리스트 등록-->
+                        <span id="GetWeekHtml"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table-bordered table-hover table-responsive mb-0 floating-thead table" style="width: 85%; margin-left: auto; margin-right: auto; ">
+                      <thead style="font-weight:bold;text-align:center;vertical-align:top;">
+                        <tr>
+                          <th rowspan="1" colspan="4" class="table-primary">구 분</th>
+                          <th rowspan="2" colspan="1" class="table-info" style="width: 30%;"><div>실 적</br><span id="PlanDateText"></span></div></th>
+                          <th rowspan="2" colspan="1" class="table-info" style="width: 30%;"><div>계 획</br><span id="PerformanceDateText"></span></div></th>
+                        </tr>
+                        <tr class="table-info">
+                            <th rowspan="1" colspan="1" style="width: 0%; " class = "hidden">id</th><!-- id 열 숨기기  -->
+                            <th rowspan="1" colspan="1" style="width: 6%;">전략방향</th>
+                            <th rowspan="1" colspan="1" style="width: 8%;">전략과제</th>
+                            <th rowspan="1" colspan="1" style="width: 8%;">세부과제</th>
+                            <th rowspan="1" colspan="1" style="width: 6%;">구 분</th>
+                          </tr>
+                      </thead>
+                        <!-- Table make API를 통해 입력  -->
+                        <tbody id="reportbody"></tbody>
+
+                    </table>
+                  </div>
+            </div>
+        </div>
+    </section>
+    <!-- Default Progress End  -->
+
+</div>
+
+
+<!--Modal form 시작 -->
+
+<div class="modal fade text-left show" id="inlineForm" tabindex="-1" aria-labelledby="myModalLabel33" style="display: block; padding-right: 17px;" aria-modal="true" role="dialog">    
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel33" style="font-weight: 900;"><span id="sep"></span></h4>
+        <button onclick="Modalshow(Isshow = false)" type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        </div>
+        <div class="card-content">
+            <div class="card-body">
+                <form class="form" id="form_data" method="POST">{% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-12 col-12">
+                            <div class="form-group">
+                                <h6 style="font-weight: 700;">*제목 :</h6>
+                                <input id="modal_title" autocomplete="on" type="text" id="제목" class="form-control" placeholder="ex) 위탁관리 전산화" name="제목" required>
+                                <div id="suggestion_box">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 col-12">
+                            <div class="form-group">
+                                <h6 style="font-weight: 700;">*내용 :</h6>
+                                <textarea style="height:100px;" id="내용" type="text" class="form-control" placeholder="ex) 영업팀 위탁계약 등록" name="내용" required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-12">
+                            <div class="form-group">
+                                <h6 style="font-weight: 700;">*담당자 :</h6>
+                                <input type="text" class="form-control" id="담당자" placeholder="ex) 홍길동 외" name="담당자" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-12">
+                            <div class="form-group">
+                                <h6 style="font-weight: 700;">장소 또는 업체 :</h6>
+                                <input type="text" class="form-control" id="장소업체" placeholder="ex) 안산 or 삼일정밀" name="장소업체">
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-12">
+                            <div class="form-group">
+                                <h6 style="font-weight: 700;">금액 :</h6>
+                                <input type="number" step="0.1" value="0.0" id="금액" class="form-control" placeholder="City" name="금액">
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-12">
+                            <div class="form-group">
+                                <h6 style="font-weight: 700;">단위 :</h6>
+                                <select type="text" class="form-control" id="단위" name="단위" placeholder="Country">
+                                    <option value="백만원">백만원</option>
+                                    <option value="억원">억원</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-12">
+                            <div class="form-group">
+                                <h6 style="font-weight: 700;">출장 or 일반 :</h6>
+                                <select type="text"  class="form-control" id="출장여부" name="출장여부" placeholder="Country">
+                                    <option value="일반">일반</option>
+                                    <option value="출장">출장</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-12">
+                            <div class="form-group">
+                                <h6 style="font-weight: 700;">*중요도 :</h6>
+                                <select type="text" class="form-control" id="중요도" name="중요도" placeholder="Country">
+                                    <option value="일반">일반</option>
+                                    <option value="높음">높음</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-12">
+                            <div class="form-group">
+                                <h6 style="font-weight: 700;">*시작일 :</h6>
+                                <div class="input-group date">
+                                    <input type="text" class="form-control" id="시작일" name="시작일" required><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-12">
+                            <div class="form-group">
+                                <h6 style="font-weight: 700;">*종료일 :</h6>
+                                <div class="input-group date">
+                                    <input type="text" class="form-control" id="종료일" name="종료일" required><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Hidden 정보 -->
+                        <div class="row">
+                            <div class="hidden">
+                                <!--추가 필요한것들 정보, 모달(modal) 팝업될 때 값 변경 이벤트 삽입 -->
+                                <input id="TemplateName" name="TemplateName"    value="Templatevalue">
+                                <input id="ContentsID"   name="ContentsID"      value="ContentsID">
+                                <input id="Div"          name="Div"             value="Div">
+
+                                <input id="Year"         name="Year"            value={{Year}}>
+                                <input id="WeekNum"      name="WeekNum"         value={{WeekNum}}>
+                                <input id="작성자"        name="작성자"          value={{user.username}}>
+                                <input id="작성자ID"      name="작성자ID"        value={{user.id}}>
+                                <input id="div_list_id"  name="div_list_id"     value={{div_list_id}}><!--부서 식별번호 -->
+                                <input id="등록일시"      name="등록일시"        value="#">
+                                <input id="ReportID"     name="ReportID"        value="#"><!--글 등록번호, 수정&삭제 시 사용 -->
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 d-flex justify-content-end">
+                                <button type="reset" class="btn btn-light-secondary mr-1 mb-1" onclick="Modalshow(Isshow = false)">닫기</button>
+                                <button type="button" id="ReportRegist" class="btn btn-primary mr-1 mb-1 hidden">등록</button>
+                                <button type="button" id="ReportDelete" class="btn btn-danger mr-1 mb-1 hidden">삭제</button>
+                                <button type="button" id="ReportModify" class="btn btn-warning mr-1 mb-1 hidden">수정</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+<div id = "fade" class="modal-backdrop fade show"></div>
+
+<!--이벤트 등록-->
+<script type="text/javascript">
+    $(document).ready(function(){
+        ReportView(
+            div_list_id = "{{div_list_id}}", 
+            Year        = "{{Year}}", 
+            WeekNum     = "{{WeekNum}}"
+            );
+        Modalshow(Isshow = false);
+        Datepicker();
+        change_date();
+        get_form_data();
+        GetDivList(div1="{{div1}}", div2="{{div2}}"); // Django Template variable call
+        GetWeekHtml(
+            Year        ="{{Year}}",
+            WeekNum     ="{{WeekNum}}",
+            div_list_id ="{{div_list_id}}",
+            div1        ="{{div1}}",
+            div2        ="{{div2}}",
+            ); // 주차 리스트
+
+
+        // 해당 주차의 시작일과 종료일 산출
+        $("#FullDateText").append(getDateRangeOfWeek(weekNo="{{WeekNum}}").FullDateText);
+        $("#PlanDateText").append(getDateRangeOfWeek(weekNo="{{WeekNum}}").FullDateText);
+        $("#PerformanceDateText").append(getDateRangeOfWeek(weekNo=Number("{{WeekNum}}")+1).FullDateText);
+
+        //폼(form)에 있는 3개버튼 ( 등록 / 수정 / 삭제 )버튼에 대한 기능에 대한 이벤트 등록
+        ReportSubmitAction();
+
+    });
+</script>
+
+<!-- (21.08.19 추가)_Table헤더 틀고정 기능 추가, table에 floating-thead 클래스를 추가하면 작동  -->
+<!-- https://zetawiki.com/wiki/HTML_%ED%81%B0_%ED%85%8C%EC%9D%B4%EB%B8%94_%ED%8B%80_%EA%B3%A0%EC%A0%95 -->
+<script>
+    $(function () {
+      $('table.floating-thead').each(function() {
+        $(this).prepend( $(this).find('thead:first').clone().hide().css('top',0).css('position','fixed') );
+      });
+      
+      $(window).scroll(function() {
+        var scrollTop = $(window).scrollTop(),
+          scrollLeft = $(window).scrollLeft();
+        $('table.floating-thead').each(function(i) {
+          var thead = $(this).find('thead:last'),
+            clone = $(this).find('thead:first'),
+            top = $(this).offset().top,
+            bottom = top + $(this).height() - thead.height();
+    
+          if( scrollTop < top || scrollTop > bottom ) {
+            clone.hide();
+            return true;
+          }
+          if( clone.is('visible') ) return true;
+          clone.find('th').each(function(i) {
+            $(this).width( thead.find('th').eq(i).width() );
+          });
+          clone.css("margin-left", -scrollLeft ).width( thead.width() ).show();
+        });
+      });
+    });
+</script>
+
+<!--//검색어 추천기능 Function 등록-->
+<script type="text/javascript">
+
+    async function suggestion(){
+        $("#modal_title").keyup(function){}
+    }
+
+
+</script>
+
+<!--Custom Function 등록-->
+<script type="text/javascript">
+    //원하는 기능을 넣어주세욤
+</script>
+
+<!--Custom Function 등록-->
+<script type="text/javascript">
+    //원하는 기능을 넣어주세욤
+</script>
+<!--Custom Function 등록-->
+<script type="text/javascript">
+    //원하는 기능을 넣어주세욤
+</script>
+
+{% endblock %}
