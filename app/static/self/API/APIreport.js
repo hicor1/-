@@ -583,7 +583,10 @@ async function TitleRecommand(Query, ContentsID, div_list_id){
                     }
 
                 } else{
-                    string += "<option value=" + '"' + "추천검색결과가 존재하지 않습니다." +'"'+ '>';
+                    //string += "<option value=" + '"' + "검색어 = '" + Query + "'" +" 에 대한 추천검색결과가 존재하지 않습니다." +'"'+ ' readonly>';
+                    string += '<option value="' + Query +  '" readonly>';
+                    string += '검색어 : "' + Query + '"' +" 에 대한 추천검색결과가 존재하지 않습니다.";
+                    string += "</option>";
                 }
                 $("#title_list").empty();
                 $("#title_list").append(string);
