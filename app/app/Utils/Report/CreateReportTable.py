@@ -227,8 +227,10 @@ def CallReportTemplate(div_list_id, Year, WeekNum, UserID):
     TemplateName = get_template_info(div_list_id, Year, WeekNum)
     
     #. 템플릿 경로 만들기
-    BasePath  = "F:/USB/Personal/Python/[성과관리프로젝트]/성과관리/app/app/Utils/Report"
-    TotalPath =  os.path.join(BasePath, TemplateName)
+    ProjectPath  = os.getcwd()
+    addPath      = "app/Utils/Report"
+    BasePath     = os.path.join(ProjectPath, addPath)
+    TotalPath    =  os.path.join(BasePath, TemplateName)
     
     ###. 테이블 불러오기
     df = pd.read_excel(TotalPath, engine="openpyxl")

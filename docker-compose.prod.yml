@@ -7,7 +7,7 @@ services:
       context: ./app
       dockerfile: Dockerfile.prod
     restart: always
-    command: gunicorn app.wsgi:application --bind 0.0.0.0:8000
+    command: gunicorn --workers=8 --threads=8 app.wsgi:application --bind 0.0.0.0:8000 ## workers & threads 는 cpu * 2 가 최대 값이다!!! default값은 1로 되어있음
     volumes:
       - static_volume:/home/app/web/staticfiles
       - media_volume:/home/app/web/mediafiles
@@ -28,7 +28,7 @@ services:
     ports:
       #- 443:443 # 21.4.30 추가
       - 80:80
-      - 1337:443 # 외부에서 1337로 받고, nginx.conf에 따라 433 listen에 받는다, 그 후에 upstream인 web:8000으로 proxy한다.
+      - 1339:443 # 외부에서 1337로 받고, nginx.conf에 따라 433 listen에 받는다, 그 후에 upstream인 web:8000으로 proxy한다.
     depends_on:
       - web
     networks: #. 컨테이너간 통신을 위한 네트워크 지정

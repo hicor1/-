@@ -59,7 +59,7 @@ def GetQueryString(Target, Query): # ex: concat("StandarDesignation","TestMethod
     
     return text
 
-print(GetQueryString(Target="제목", Query="위탁 전산"))
+#print(GetQueryString(Target="제목", Query="위탁 전산"))
 
 #%% 회원가입정보 입력
 
@@ -294,7 +294,6 @@ def Title_Sim_Query(ConnectInfo, Query, ContentsID, div_list_id):
             Limit       = 10
         )
     
-    print(SQL)
     try: # 쿼리결과가 없으면 에러발생, 예외처리 ㄱㄱ
         test = pd.read_sql(SQL, conn)
         test = test.loc[test["similarity"]>=0.0] # 유사도가 전혀없는 녀석은 제외
@@ -318,7 +317,7 @@ def Title_Sim_Query(ConnectInfo, Query, ContentsID, div_list_id):
     return {"processtime(ms)":processtime,
             "df" : 제목_List}
 
-result = Title_Sim_Query(ConnectInfo, Query = "전산", ContentsID=0, div_list_id=1)
+#result = Title_Sim_Query(ConnectInfo, Query = "전산", ContentsID=0, div_list_id=1)
 
 #%% pg_trgm 설치 ( 필요한 경우 만 )
 # https://yahwang.github.io/posts/80
@@ -372,7 +371,7 @@ def CreateIndex(ConnectInfo):
     
     print('{0} : CREATE INDEX Done'.format(datetime.datetime.now()))
     
-CreateIndex(ConnectInfo)
+#CreateIndex(ConnectInfo)
 
 #%%
 if __name__ == "__main__":

@@ -10,6 +10,7 @@ requests
 pycryptodome
 xmltodict
 django-pandas==0.6.4
+bs4==0.0.1
 # 필요하지만 안되는것들.....
 #numpy==1.16.0
 #pandas==0.23.4 # 이놈 왜 설치안됨??... ㅡㅡ

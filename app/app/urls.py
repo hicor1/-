@@ -15,6 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+from django.conf.urls import url
+from django.views.static import serve
 
 urlpatterns = [
     path('admin/'               , admin.site.urls),
@@ -26,6 +30,11 @@ urlpatterns = [
     path('APIAuthentication/'   , include('APIAuthentication.urls')), ## App url 등록
     
 ]
+#urlpatterns += [url(r'^staticfiles/(?P<path>.*)', serve, kwargs={'insecure': True})]
+
+if bool(settings.DEBUG):
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 
 # 21.08.03 에러 페이지 설정
 from django.conf.urls import (handler400, handler404, handler500)

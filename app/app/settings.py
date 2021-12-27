@@ -24,7 +24,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # For example: 'DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]'
 
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "*").split(" ")
-DEBUG         = int(os.environ.get("DEBUG", "1"))
+#DEBUG         = int(os.environ.get("DEBUG", "1"))
+DEBUG = 0
 SECRET_KEY    = os.environ.get("SECRET_KEY", "foo")
 
 #ALLOWED_HOSTS = ["*"]
@@ -41,6 +42,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'app', # 프로젝트 이름 반드시 추가!!
+
     'import_export', # admin excel import 추가
     'rest_framework', # restframework 등록
     'django.contrib.postgres', # (21.5.11)TrigramSimilarity 때문에 추가함
@@ -49,7 +52,6 @@ INSTALLED_APPS = [
     'main',
     'Authentication',
     'APIAuthentication',
-
 ]
 
 MIDDLEWARE = [
@@ -144,10 +146,14 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
-STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+# https://blog.hannal.com/2015/04/start_with_django_webframework_06/
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+    #os.path.join(BASE_DIR, 'static2'), # (샘플), 이렇게 추가 가능
+    ) # 개발 단계에서 사용하는 정적 파일이 위치, 복수의 파일 가능
 
-STATIC_URL = "/staticfiles/"
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATIC_URL = "/staticfiles/" # 웹 페이지에서 사용할 정적 파일의 최상위 URL 경로, URL로만 존재하는 단위, 이용자 마음대로 정해도 무방
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles") # Django 프로젝트에서 사용하는 모든 정적 파일을 한 곳에 모아넣는 경로
 
 MEDIA_URL = "/mediafiles/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "mediafiles")
